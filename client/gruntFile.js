@@ -11,8 +11,8 @@ module.exports = function(grunt) {
 
     // Default task.
     grunt.registerTask('default', ['jshint','build']);
-    grunt.registerTask('build', ['clean','html2js','concat','recess:build','copy:img']);
-    grunt.registerTask('release', ['clean','html2js','uglify','jshint','concat:index', 'recess:min','copy:img']);
+    grunt.registerTask('build', ['clean','html2js','concat','recess:build','copy:img','copy:vendor']);
+    grunt.registerTask('release', ['clean','html2js','uglify','jshint','concat:index', 'recess:min','copy:img','copy:vendor']);
 
     // Print a timestamp (useful for when watching)
     grunt.registerTask('timestamp', function() {
@@ -42,7 +42,10 @@ module.exports = function(grunt) {
         copy: { 
             img:  {
                 files: [{ dest: '<%= distdir %>/img', src : '**', expand: true, cwd: 'src/img/' }] 
-            } 
+            },
+            vendor: {
+                files: [{ dest: '<%= distdir %>/js', src : '**', expand: true, cwd: 'vendor/' }]
+            }
         }, 
         html2js: { 
             app:  {
