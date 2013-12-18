@@ -1,8 +1,10 @@
 package game
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 	
 	"appengine"
@@ -24,8 +26,9 @@ type Game struct {
 
 func init() {
 	http.HandleFunc("/alive", alive)
-	http.HandleFunc("/api/start", start)
-	http.HandleFunc("/api/move", move)
+	http.HandleFunc("/api/game/start", gameStart)
+	http.HandleFunc("/api/game/get", gameGet)
+	http.HandleFunc("/api/game/move", gameMove)
 }
 
 func checkLogin(w http.ResponseWriter, r *http.Request) *user.User {
@@ -48,7 +51,12 @@ func alive(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "yes")
 }
 
-func start(w http.ResponseWriter, r *http.Request) {
+type GameStartResponse struct {
+	Success bool
+	Id string
+}
+
+func gameStart(w http.ResponseWriter, r *http.Request) {
 	u := checkLogin(w, r)
 	c := appengine.NewContext(r)
 
@@ -56,17 +64,100 @@ func start(w http.ResponseWriter, r *http.Request) {
 		Owner: u.String(),
 		Started: time.Now(),
 	}
-
 	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "game", nil), &g)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
+		return
 	}
 
-	fmt.Fprintf(w, "%s", key.Encode())
+	response := GameStartResponse{
+		Success: true,
+		Id: key.Encode(),
+	}
+
+	data, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
 }
 
-func move(w http.ResponseWriter, r *http.Request) {
+type GameGetResponse struct {
+	LastMove Move
+}
+
+func gameGet(w http.ResponseWriter, r *http.Request) {
+	checkLogin(w, r)
+	c := appengine.NewContext(r)
+
+	id := r.FormValue("Id")
+	gameKey, err := datastore.DecodeKey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	q := datastore.NewQuery("move").Ancestor(gameKey).Order("-Timestamp").Limit(1)
+	moves := make([]Move, 0, 1)
+	if _, err := q.GetAll(c, &moves); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	response := GameGetResponse{
+		LastMove: moves[0],
+	}
+
+	data, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
+}
+
+type GameMoveResponse struct {
+	Success bool
+	Id string
+}
+
+func gameMove(w http.ResponseWriter, r *http.Request) {
 	u := checkLogin(w, r)
-	fmt.Fprintf(w, "move, %v!", u)
+	c := appengine.NewContext(r)
+
+	id := r.FormValue("Id")
+
+	gameKey, err := datastore.DecodeKey(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	moveType,_ := strconv.Atoi(r.FormValue("MoveType"))
+	moveData := r.FormValue("MoveData")
+
+	m := Move{
+		Owner: u.String(),
+		Timestamp: time.Now(),
+		Type: moveType,
+		Data: moveData,
+	}	
+
+	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "move", gameKey), &m)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := GameMoveResponse{
+		Success: true,
+		Id: key.Encode(),
+	}
+	
+	data, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Write(data)
 }
