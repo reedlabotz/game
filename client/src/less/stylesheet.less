@@ -1,0 +1,48 @@
+@font-family-sans-serif:  "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+@margin: 2.5vmin;
+@width: 100 - (2 * @margin);
+
+@dark: #ccc;
+@light: #ddd;
+@white: #fff;
+@green: #cfa;
+@red: #fba;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: @light;
+  font-family: @font-family-sans-serif;
+}
+
+.game {
+  .box {
+    background: @white;
+    border: 1px solid @dark;
+    border-bottom: 2px solid @dark;
+    box-sizing: border-box;
+    margin: @margin;
+    padding: @margin;
+    width: @width;
+  }
+
+  .drawing {
+    height: @width;
+  }
+
+  .button {
+    border: none;
+    border-radius: 10px;
+    float: left;
+    text-align: center;
+    width: (@width / 2) - @margin;
+
+    &.cancel {
+      background: @red;
+    }
+    &.done {
+      background: @green;
+    }
+  }
+}
