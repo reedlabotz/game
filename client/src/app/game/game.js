@@ -27,8 +27,11 @@ angular.module('game', [])
                 options.editing = false;
                 options.strokes = $.parseJSON(data.Data);
             }
-
-            $scope.sketchpad = Raphael.sketchpad("drawing", options);
+            
+            var paper = Raphael("drawing");
+            paper.setViewBox(0,0,500,500,true);
+            paper.setSize('100%', '100%');
+            $scope.sketchpad = Raphael.sketchpad(paper, options);
 
             $scope.sketchpad.change(function() {
                 $scope.$apply(updateToolbox);
