@@ -1,6 +1,16 @@
 <div class="game">
   <div class="text box">Johnny flies a kite by the bay.</div>
   <div class="drawing box" id="drawing"></div>
+  <div class="toolbox box">
+    <i class="fa fa-undo"
+       ng-click="undo()"
+       ng-class="{active: undoable}"></i>
+    <i class="fa fa-repeat"
+       ng-click="redo()"
+       ng-class="{active: redoable}"></i>
+    <i class="fa fa-trash-o active"
+       ng-click="clear()"></i>
+  </div>
   <div class="buttons">
     <div class="button cancel box">Cancel</div>
     <div class="button done box">Done</div>

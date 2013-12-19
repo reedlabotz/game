@@ -1,10 +1,11 @@
 angular.module('app', [
     'ngRoute',
+    'queue',
     'game',
     'templates.app']);
 
 angular.module('app').config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.otherwise({redirectTo:'/game'});
+    $routeProvider.otherwise({redirectTo:'/queue'});
 }]);
 
 

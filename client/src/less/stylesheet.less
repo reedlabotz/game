@@ -6,6 +6,7 @@
 @dark: #ccc;
 @light: #ddd;
 @white: #fff;
+@black: #000;
 @green: #cfa;
 @red: #fba;
 
@@ -16,33 +17,43 @@ html, body {
   font-family: @font-family-sans-serif;
 }
 
-.game {
-  .box {
-    background: @white;
-    border: 1px solid @dark;
-    border-bottom: 2px solid @dark;
-    box-sizing: border-box;
-    margin: @margin;
-    padding: @margin;
-    width: @width;
-    &.drawing {
-      height: @width;
-      padding: 0;
-    }
+.box {
+  background: @white;
+  border: 1px solid @dark;
+  border-bottom: 2px solid @dark;
+  box-sizing: border-box;
+  margin: @margin;
+  padding: @margin;
+  width: @width;
+  &.drawing {
+    height: @width;
+    padding: 0;
   }
+}
 
-  .button {
-    border: none;
-    border-radius: 10px;
-    float: left;
-    text-align: center;
+.button {
+  border: none;
+  border-radius: 10px;
+  display: block;
+  float: left;
+  text-align: center;
+
+  &.cancel {
+    background: @red;
     width: (@width / 2) - @margin;
-
-    &.cancel {
-      background: @red;
-    }
-    &.done {
-      background: @green;
-    }
   }
+  &.done {
+    background: @green;
+    width: (@width / 2) - @margin;
+  }
+}
+
+.toolbox {
+  font-size: 24px;
+  letter-spacing: 10px;
+  color: @light;
+  .active {
+    color: @black;
+  }
+
 }
