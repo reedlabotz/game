@@ -9,42 +9,23 @@ import (
 	
 	"appengine"
 	"appengine/datastore"
-	"appengine/user"
 )
 
 type Move struct {
-	Owner string
-	Data string
+	Data []byte
 	Type int
 	Timestamp time.Time
 }
 
 type Game struct {
-	Owner string
 	Started time.Time
 }
 
 func init() {
-	http.HandleFunc("/alive", alive)
+	http.HandleFunc("/api/alive", alive)
 	http.HandleFunc("/api/game/start", gameStart)
 	http.HandleFunc("/api/game/get", gameGet)
 	http.HandleFunc("/api/game/move", gameMove)
-}
-
-func checkLogin(w http.ResponseWriter, r *http.Request) *user.User {
-	c := appengine.NewContext(r)
-	u := user.Current(c)
-	if u == nil {
-		url, err := user.LoginURL(c, r.URL.String())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return nil
-		}
-		w.Header().Set("Location", url)
-		w.WriteHeader(http.StatusFound)
-		return nil
-	}
-	return u
 }
 
 func alive(w http.ResponseWriter, r *http.Request) {
@@ -57,11 +38,9 @@ type GameStartResponse struct {
 }
 
 func gameStart(w http.ResponseWriter, r *http.Request) {
-	u := checkLogin(w, r)
 	c := appengine.NewContext(r)
 
 	g := Game{
-		Owner: u.String(),
 		Started: time.Now(),
 	}
 	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "game", nil), &g)
@@ -84,11 +63,11 @@ func gameStart(w http.ResponseWriter, r *http.Request) {
 }
 
 type GameGetResponse struct {
-	LastMove Move
+	Type int
+	Data string
 }
 
 func gameGet(w http.ResponseWriter, r *http.Request) {
-	checkLogin(w, r)
 	c := appengine.NewContext(r)
 
 	id := r.FormValue("Id")
@@ -105,7 +84,8 @@ func gameGet(w http.ResponseWriter, r *http.Request) {
 	}
 	
 	response := GameGetResponse{
-		LastMove: moves[0],
+		Type: moves[0].Type,
+		Data: string(moves[0].Data),
 	}
 
 	data, err := json.Marshal(response)
@@ -122,10 +102,9 @@ type GameMoveResponse struct {
 }
 
 func gameMove(w http.ResponseWriter, r *http.Request) {
-	u := checkLogin(w, r)
 	c := appengine.NewContext(r)
 
-	id := r.FormValue("Id")
+	id := r.FormValue("GameId")
 
 	gameKey, err := datastore.DecodeKey(id)
 	if err != nil {
@@ -133,11 +112,10 @@ func gameMove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	moveType,_ := strconv.Atoi(r.FormValue("MoveType"))
-	moveData := r.FormValue("MoveData")
+	moveType,_ := strconv.Atoi(r.FormValue("Type"))
+	moveData := []byte(r.FormValue("Data"))
 
 	m := Move{
-		Owner: u.String(),
 		Timestamp: time.Now(),
 		Type: moveType,
 		Data: moveData,

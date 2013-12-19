@@ -1,7 +1,11 @@
 <div class="game">
-  <div class="text box">Johnny flies a kite by the bay.</div>
+  <div class="text box"
+       ng-show="Type == 0">
+    {{Data}}
+  </div>
   <div class="drawing box" id="drawing"></div>
-  <div class="toolbox box">
+  <div class="toolbox box"
+       ng-show="Type == 0">
     <i class="fa fa-undo"
        ng-click="undo()"
        ng-class="{active: undoable}"></i>
@@ -11,8 +15,19 @@
     <i class="fa fa-trash-o active"
        ng-click="clear()"></i>
   </div>
+  <input class="box"
+         type="text"
+         ng-show="Type == 1"
+         ng-model="story"
+         placeholder="Describe what you see">
   <div class="buttons">
-    <div class="button cancel box">Cancel</div>
-    <div class="button done box">Done</div>
+    <div class="button cancel box"
+         ng-click="cancel()">
+      Cancel
+    </div>
+    <div class="button done box"
+         ng-click="done()">
+      Done
+    </div>
   </div>
 </div>
