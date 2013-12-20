@@ -24,19 +24,10 @@ public class SessionManager {
 	
 	public void init() {
         // Try to log in to facebook - if there's no auth token, bump them to the login fragment.
-        Session.openActiveSession(context, new FacebookLoginFragment(), true, new Session.StatusCallback() {
-	        // callback when session changes state
-	        @Override
-	        public void call(Session session, SessionState state, Exception exception) {
-	        	Log.d(TAG, "FB Session change: "+state);
-	        	SessionManager.this.session = session;
-				if (session.isOpened()) {
-					processProfileInfo(session);
-				} else {
-					showFacebookLogin();
-				}
-	        }
-        });
+		this.session = Session.openActiveSessionFromCache(context);
+		if (session == null) {
+			showFacebookLogin();
+		}
 	}
 	
 	private void processProfileInfo(Session session) {
@@ -63,7 +54,6 @@ public class SessionManager {
                 .commit();
         // We want the fragment fully created so we can use it immediately.
         fm.executePendingTransactions();
-
 	}
 	
 }
