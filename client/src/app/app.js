@@ -10,4 +10,13 @@ angular.module('app').config(['$routeProvider', function ($routeProvider) {
 
 
 angular.module('app').controller('AppCtrl', ['$scope', function($scope) {
+    if (typeof hostapp === 'undefined') {
+        console.warn("No hostapp, using debug");
+        var userid = prompt("UserId?");
+        window.hostapp = {
+            getUserId: function() {
+                return userid;
+            }
+        };
+    }
 }]);
