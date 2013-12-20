@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Scribblevine</string>
+    <string name="app_name">Webview Test</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="app_id">597973343608012</string>
+    <string name="app_url">http://game.reedlabotz.com/</string>
+    
 </resources>
