@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -47,6 +48,8 @@ public class MainActivity extends Activity {
 										Log.d("ASDF", "SUCCESSFULLY LOGGED IN " + response + "    " + user);
 										userInfo = user;
 										setupWebview();
+									} else {
+										Toast.makeText(MainActivity.this, "Facebook login failed", Toast.LENGTH_SHORT).show();
 									}
 								}
 							}).executeAsync();
