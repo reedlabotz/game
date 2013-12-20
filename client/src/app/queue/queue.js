@@ -15,7 +15,8 @@ angular.module('queue', [])
         };
     }])
     .controller('QueueNewCtrl', ['$scope', '$location', function($scope, $location) {
-        $.post("/api/game/start", function(data) {
+        var userId = hostapp.getUserId();
+        $.post("/api/game/start", { UserId: userId }, function(data) {
             data = $.parseJSON(data);
             if (data.Success) {
                 $scope.GameId = data.Id;
@@ -24,16 +25,19 @@ angular.module('queue', [])
 
         $scope.startGame = function() {
             $.post("/api/game/move",
-                       { GameId: $scope.GameId, Type: 0, Data: $scope.story }, 
-                       function(data) {
-                           data = $.parseJSON(data);
-                           if (data.Success) {
-                               $scope.$apply(function() {
-                                   $location.path("/queue");
-                                   console.log($scope.GameId);
-                               });
-                           }
-                       });
+                   { UserId: userId, 
+                     GameId: $scope.GameId,
+                     Type: 0,
+                     Data: $scope.story }, 
+                   function(data) {
+                       data = $.parseJSON(data);
+                       if (data.Success) {
+                           $scope.$apply(function() {
+                               $location.path("/queue");
+                               console.log($scope.GameId);
+                           });
+                       }
+                   });
         };
 
         $scope.cancel = function() {

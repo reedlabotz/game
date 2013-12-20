@@ -12,12 +12,14 @@ import (
 )
 
 type Move struct {
-	Data []byte
+	UserId string
 	Type int
+	Data []byte
 	Timestamp time.Time
 }
 
 type Game struct {
+	UserId string
 	Started time.Time
 }
 
@@ -39,8 +41,9 @@ type GameStartResponse struct {
 
 func gameStart(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-
+	userId := r.FormValue("UserId")
 	g := Game{
+		UserId: userId,
 		Started: time.Now(),
 	}
 	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "game", nil), &g)
@@ -115,7 +118,9 @@ func gameMove(w http.ResponseWriter, r *http.Request) {
 	moveType,_ := strconv.Atoi(r.FormValue("Type"))
 	moveData := []byte(r.FormValue("Data"))
 
+	userId := r.FormValue("UserId")
 	m := Move{
+		UserId: userId,
 		Timestamp: time.Now(),
 		Type: moveType,
 		Data: moveData,
