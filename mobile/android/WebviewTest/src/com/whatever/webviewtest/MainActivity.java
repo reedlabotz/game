@@ -29,32 +29,27 @@ public class MainActivity extends Activity {
         
         // start Facebook Login
         Session.openActiveSession(this, true, new Session.StatusCallback() {
-
-          // callback when session changes state
-          @Override
-          public void call(Session session, SessionState state, Exception exception) {
+	        // callback when session changes state
+	        @Override
+	        public void call(Session session, SessionState state, Exception exception) {
 				if (session.isOpened()) {
 					currentSession = session;
 					// make request to the /me API
 					Request.newMeRequest(session, 
-							new Request.GraphUserCallback() {
-
-								// callback after Graph API response with user
-								// object
-								@Override
-								public void onCompleted(GraphUser user,
-										Response response) {
-									if (user != null) {
-										Log.d("ASDF", "SUCCESSFULLY LOGGED IN " + response + "    " + user);
-										userInfo = user;
-										setupWebview();
-									} else {
-										Toast.makeText(MainActivity.this, "Facebook login failed", Toast.LENGTH_SHORT).show();
-									}
+						new Request.GraphUserCallback() {
+							@Override 
+							public void onCompleted(GraphUser user, Response response) {
+								if (user != null) {
+									Log.d("ASDF", "SUCCESSFULLY LOGGED IN " + response + "    " + user);
+									userInfo = user;
+									setupWebview();
+								} else {
+									Toast.makeText(MainActivity.this, "Facebook login failed", Toast.LENGTH_SHORT).show();
 								}
-							}).executeAsync();
+							}
+						}).executeAsync();
 				}
-			}
+	        }
         });
     }
     
