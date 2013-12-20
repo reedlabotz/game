@@ -56,9 +56,10 @@ angular.module('game', [])
             $location.path("/queue");
         };
         $scope.done = function() {
-            console.log($scope);
+            var userId = hostapp.getUserId();
             var payload = {
-                GameId: $routeParams.Id
+                GameId: $routeParams.Id,
+                UserId: userId
             };
 
             if ($scope.Type == 0) {

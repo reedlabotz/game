@@ -5,6 +5,7 @@
 accepts
 
 ```
+UserId: 12345
 Players: [ playerObject ]
 ```
 
@@ -22,6 +23,7 @@ returns
 accepts
 
 ```
+UserId: 12345
 Id: ‘abcd’
 ```
 
@@ -40,6 +42,7 @@ returns
 accepts
 
 ```
+UserId: 12345
 GameId: ‘abcd’
 Type: 0
 Data: ‘The cat in the hat’
@@ -59,6 +62,7 @@ returns
 accepts
 
 ```
+UserId: 12345
 Id: ‘abcd’
 ```
 
@@ -75,6 +79,7 @@ returns
 accepts
 
 ```
+UserId: 12345
 Id: ‘abcd’
 ```
 
