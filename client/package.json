@@ -1,19 +1,19 @@
 {
-  "author": "",
-  "name": "game",
-  "homepage": "https://github.com/reedlabotz/game",
+  "author": "RJ & Reed",
+  "name": "ScribbleVine",
+  "homepage": "https://github.com/reedlabotz/scribblevine",
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "git@github.com:reedlabotz/game.git"
+    "url": "git@github.com:reedlabotz/scribblevine.git"
   },
   "bugs": {
-    "url": "https://github.com/reedlabotz/game/issues"
+    "url": "https://github.com/reedlabotz/scribblevine/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://raw.github.com/reedlabotz/game/master/LICENSE"
+      "url": "https://raw.github.com/reedlabotz/scribblevine/master/LICENSE"
     }
   ],
   "engines": {
