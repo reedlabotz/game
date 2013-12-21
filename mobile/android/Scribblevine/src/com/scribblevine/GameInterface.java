@@ -1,21 +1,67 @@
 package com.scribblevine;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+
+import com.facebook.model.GraphUser;
+
+import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
 public class GameInterface {
+	private final static String TAG = "GameInterface";
+	public static interface GameCallback {
+		public void requestedFriendPicker();
+	}
 	private SessionManager sessionManager;
+	private WebView webview;
+	private GameCallback callback;
 	
-	GameInterface(SessionManager sessionManager) {
+	GameInterface(SessionManager sessionManager, GameCallback callback) {
 		this.sessionManager = sessionManager;
+		this.callback = callback;
+	}
+	
+	public void setWebview(WebView webview) {
+		this.webview = webview;
+        webview.addJavascriptInterface(this, "hostapp");
+	}
+	
+	public void unsetWebview() {
+		this.webview = null;
 	}
 	
     @JavascriptInterface
     public String getUserId() {
+    	Log.d(TAG, "js: getUserId()");
     	return sessionManager.getUserId();
     }
     
     @JavascriptInterface
     public String getAccessToken() {
+    	Log.d(TAG, "js: getAccessToken()");
     	return sessionManager.getAccessToken();
     }
+    
+    @JavascriptInterface
+    public void showFriendPicker() {
+    	callback.requestedFriendPicker();
+    }
+    
+    public void finishFriendPicker(List<GraphUser> friends) {
+    	if (webview == null) 
+    		return;
+    	JSONArray friendIds = new JSONArray();
+    	for (GraphUser user : friends) {
+    		friendIds.put(user.getId());
+    	}
+    	String js = "javascript:finishedFriendPicker("+ friendIds.toString() +");";
+    	Log.d(TAG, "JS for finishFriendPicker: "+js);
+    	webview.loadUrl(js);
+    }
+    
+    
 }

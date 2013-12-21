@@ -29,7 +29,13 @@ public class WebviewGameFragment extends Fragment {
         webview = (WebView)getView().findViewById(R.id.webview);
         WebSettings webSettings = webview.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webview.addJavascriptInterface(gameInterface, "hostapp");
+        gameInterface.setWebview(webview);
         webview.loadUrl(getResources().getString(R.string.app_url));
 	}	
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		gameInterface.unsetWebview();
+	}
 }
