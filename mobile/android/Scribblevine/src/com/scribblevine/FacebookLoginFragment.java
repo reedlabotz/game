@@ -1,6 +1,5 @@
 package com.scribblevine;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,11 +26,6 @@ public class FacebookLoginFragment extends Fragment {
 		super.onStart();
 		
 		LoginButton loginButton = (LoginButton) getView().findViewById(R.id.facebook_login_button);
-		loginButton.setFragment(this);
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		sessionManager.checkLoginState();
-	}
+//		loginButton.
+	}	
 }
