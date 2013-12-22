@@ -16,6 +16,10 @@ angular.module('app').controller('AppCtrl', ['$scope', function($scope) {
         window.hostapp = {
             getUserId: function() {
                 return userid;
+            },
+            showFriendPicker: function() {
+                var players = prompt("Player UserIds?").split(",");
+                window.finishedFriendPicker(players);
             }
         };
     }

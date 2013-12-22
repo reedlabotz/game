@@ -10,38 +10,48 @@ angular.module('queue', [])
         });
     }])
     .controller('QueueCtrl', ['$scope', '$location', function($scope, $location) {
+        var userId = hostapp.getUserId();
+        $.getJSON("/api/queue/get", { UserId: userId }, function(data) {
+            $scope.$apply(function() {
+                $scope.games = data;
+            });
+        });
         $scope.startGame = function() {
             $location.path("/queue/new");
         };
     }])
     .controller('QueueNewCtrl', ['$scope', '$location', function($scope, $location) {
-        var userId = hostapp.getUserId();
-        $.post("/api/game/start", { UserId: userId }, function(data) {
-            data = $.parseJSON(data);
-            if (data.Success) {
-                $scope.GameId = data.Id;
-            }
-        });
-
-        $scope.startGame = function() {
-            $.post("/api/game/move",
-                   { UserId: userId, 
-                     GameId: $scope.GameId,
-                     Type: 0,
-                     Data: $scope.story }, 
+        window.finishedFriendPicker = function(friends) {
+            var userId = hostapp.getUserId();
+            $.post("/api/game/start",
+                   { userId: userId, 
+                     players: friends.join(",") },
                    function(data) {
                        data = $.parseJSON(data);
-                       if (data.Success) {
-                           $scope.$apply(function() {
-                               $location.path("/queue");
-                               console.log($scope.GameId);
-                           });
-                       }
+                       $scope.GameId = data.id;
                    });
+            
+            $scope.startGame = function() {
+                $.post("/api/game/move",
+                       { UserId: userId, 
+                         GameId: $scope.GameId,
+                         Type: 0,
+                         Data: $scope.story }, 
+                       function(data) {
+                           data = $.parseJSON(data);
+                           if (data.Success) {
+                               $scope.$apply(function() {
+                                   $location.path("/queue");
+                                   console.log($scope.GameId);
+                               });
+                           }
+                       });
+            };
+            
+            $scope.cancel = function() {
+                $location.path("/queue");
+            };
         };
-
-        $scope.cancel = function() {
-            $location.path("/queue");
-        };
+        hostapp.showFriendPicker();
     }]);
 
