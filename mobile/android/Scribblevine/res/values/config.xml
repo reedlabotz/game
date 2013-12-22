@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_id">597973343608012</string>
-    <!-- dev --><!-- <string name="app_url">http://game.reedlabotz.com/</string> -->
-    <!-- prod --><string name="app_url">http://scribblevine.appspot.com/</string>
+    <!-- dev --><string name="app_url">http://game.reedlabotz.com/</string>
+    <!-- prod --><!-- <string name="app_url">http://scribblevine.appspot.com/</string> -->
     
 </resources>
