@@ -76,7 +76,15 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 	
 	
 	
-	public void loggedOut(SessionManager manager) {
+	public void loggedOut(final SessionManager manager) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				loggedOutUiThread(manager);
+			}
+		});
+	}
+	
+	private void loggedOutUiThread(SessionManager manager) {
 		Log.d(TAG, "Showing facebook login fragment");
 		FacebookLoginFragment fragment = new FacebookLoginFragment();
 		fragment.setSessionManager(manager);
@@ -89,7 +97,15 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
         fm.executePendingTransactions();
 	}
 	
-	public void loggedIn(SessionManager manager) {
+	public void loggedIn(final SessionManager manager) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				loggedInUiThread(manager);
+			}
+		});
+	}
+	
+	private void loggedInUiThread(SessionManager manager) {
 		Log.d(TAG, "Hiding facebook login fragment - showing webview");
 		if (gameFragment == null) {
 			gameFragment = new WebviewGameFragment();
