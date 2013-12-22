@@ -13,7 +13,7 @@ angular.module('queue', [])
         var userId = hostapp.getUserId();
         $.getJSON("/api/queue/get", { UserId: userId }, function(data) {
             $scope.$apply(function() {
-                $scope.games = data.Games;
+                $scope.games = data;
             });
         });
         $scope.startGame = function() {
@@ -24,13 +24,11 @@ angular.module('queue', [])
         window.finishedFriendPicker = function(friends) {
             var userId = hostapp.getUserId();
             $.post("/api/game/start",
-                   { UserId: userId, 
-                     Players: friends.join(",") },
+                   { userId: userId, 
+                     players: friends.join(",") },
                    function(data) {
                        data = $.parseJSON(data);
-                       if (data.Success) {
-                           $scope.GameId = data.Id;
-                       }
+                       $scope.GameId = data.id;
                    });
             
             $scope.startGame = function() {

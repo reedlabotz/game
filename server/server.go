@@ -13,21 +13,22 @@ import (
 )
 
 type Move struct {
-	UserId string
-	Type int
-	Data []byte
-	Timestamp time.Time
+	UserId string `json:"userId"`
+	Type int `json:"type"`
+	Data []byte `json:"data"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type Game struct {
-	UserId string
-	Started time.Time
-  Players []string
+	Id string `json:"id",datastore:"-"`
+	UserId string `json:"userId"`
+	Started time.Time `json:"started"`
+  Players []string `json:"players"`
 }
 
 type QueuePlayer struct {
-	UserId string
-	Timestamp time.Time
+	UserId string `json:"userId"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func init() {
@@ -42,16 +43,7 @@ func alive(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "yes")
 }
 
-type GameStartResponse struct {
-	Success bool
-	Id string
-}
-
-func gameStart(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	userId := r.FormValue("UserId")
-	players := append(strings.Split(r.FormValue("Players"),","), userId)
-	
+func createNewGame(c appengine.Context, userId string, players []string) (Game, error) {
 	g := Game{
 		UserId: userId,
 		Started: time.Now(),
@@ -59,9 +51,11 @@ func gameStart(w http.ResponseWriter, r *http.Request) {
 	}
 	err := datastore.RunInTransaction(c, func(c appengine.Context) error {
 		key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "game", nil), &g)
+
 		if err != nil {
 			return err
 		}
+
 		// For now just add all players into the queue.
 		for _,p := range players {
 			qp := QueuePlayer {
@@ -69,28 +63,33 @@ func gameStart(w http.ResponseWriter, r *http.Request) {
 				Timestamp: time.Now(),
 			}
 			_, err := datastore.Put(c, datastore.NewIncompleteKey(c, "queueplayer", key), &qp)
+
 			if err != nil {
 				return err
 			}
 		}
-		response := GameStartResponse{
-			Success: true,
-			Id: key.Encode(),
-		}
 		
-		data, err := json.Marshal(response)
-		if err != nil {
-			return err
-		}
-		w.Write(data)
-		
+		g.Id = key.Encode()
+
 		return nil
 	}, nil)
 	
+	return g, err
+}
+
+func gameStart(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	userId := r.FormValue("userId")
+	players := append(strings.Split(r.FormValue("players"),","), userId)
+
+	g, err := createNewGame(c, userId, players)
+
+	data, err := json.Marshal(g)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		http.Error(w, err.Error(), http.StatusInternalServerError)	
 	}
+
+	w.Write(data)
 }
 
 type GameGetResponse struct {
@@ -173,10 +172,6 @@ func gameMove(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-type QueueGetResponse struct {
-	Games []string
-}
-
 func queueGet(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
@@ -187,15 +182,13 @@ func queueGet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	games := make([]string, len(keys))
+	games := make([]Game, len(keys))
+	datastore.GetMulti(c, keys, &games)
 	for i,k := range keys {
-		games[i] = k.Parent().Encode()
-	}
-	response := QueueGetResponse{
-		Games: games,
+		games[i].Id = k.Parent().Encode()
 	}
 
-	data, err := json.Marshal(response)
+	data, err := json.Marshal(games)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

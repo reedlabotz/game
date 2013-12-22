@@ -2,9 +2,12 @@
    ng-click="startGame()">
   Start new game
 </div>
+<hr>
 <a ng-repeat="game in games"
      class="box button"
-     ng-href="#/game/{{game}}">
+     ng-href="#/game/{{game.id}}">
+  <img ng-repeat="player in game.players"
+       src="http://graph.facebook.com/{{player}}/picture?type=square">
   A previous game
 </a>
 
