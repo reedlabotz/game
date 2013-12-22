@@ -48,6 +48,7 @@ public class GameInterface {
     
     @JavascriptInterface
     public void showFriendPicker() {
+    	Log.d(TAG, "js: showFriendPicker()");
     	callback.requestedFriendPicker();
     }
     
@@ -58,7 +59,7 @@ public class GameInterface {
     	for (GraphUser user : friends) {
     		friendIds.put(user.getId());
     	}
-    	String js = "javascript:finishedFriendPicker("+ friendIds.toString() +");";
+    	String js = "javascript:(function(){\n console.log('current friendPicker callback:'+window.finishedFriendPicker);\n window.finishedFriendPicker("+ friendIds.toString() +");\n})()";
     	Log.d(TAG, "JS for finishFriendPicker: "+js);
     	webview.loadUrl(js);
     }
