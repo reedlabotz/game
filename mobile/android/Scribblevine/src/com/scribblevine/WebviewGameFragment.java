@@ -32,6 +32,8 @@ public class WebviewGameFragment extends Fragment {
 	        webview.loadUrl(getResources().getString(R.string.app_url));
 		} else if (webview.getParent() instanceof ViewGroup){
 			((ViewGroup) webview.getParent()).removeView(webview);
+		} else {
+			Log.e(TAG, "Webview doesn't have a parent!");
 		}
         return webview;
 	}
