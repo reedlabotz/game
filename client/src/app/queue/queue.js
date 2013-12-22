@@ -10,6 +10,12 @@ angular.module('queue', [])
         });
     }])
     .controller('QueueCtrl', ['$scope', '$location', function($scope, $location) {
+        var userId = hostapp.getUserId();
+        $.getJSON("/api/queue/get", { UserId: userId }, function(data) {
+            $scope.$apply(function() {
+                $scope.games = data.Games;
+            });
+        });
         $scope.startGame = function() {
             $location.path("/queue/new");
         };
@@ -48,5 +54,6 @@ angular.module('queue', [])
                 $location.path("/queue");
             };
         };
+        hostapp.showFriendPicker();
     }]);
 

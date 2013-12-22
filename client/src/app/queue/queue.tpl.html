@@ -2,3 +2,9 @@
    ng-click="startGame()">
   Start new game
 </div>
+<a ng-repeat="game in games"
+     class="box button"
+     ng-href="#/game/{{game}}">
+  A previous game
+</a>
+
