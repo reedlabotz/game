@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 	
 	"appengine"
@@ -21,6 +22,11 @@ type Move struct {
 type Game struct {
 	UserId string
 	Started time.Time
+  Players []string
+}
+
+type GamePlayer struct {
+	UserId string
 }
 
 func init() {
@@ -42,9 +48,12 @@ type GameStartResponse struct {
 func gameStart(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	userId := r.FormValue("UserId")
+	players := strings.Split(r.FormValue("Players"),",")
+	
 	g := Game{
 		UserId: userId,
 		Started: time.Now(),
+		Players: players,
 	}
 	key, err := datastore.Put(c, datastore.NewIncompleteKey(c, "game", nil), &g)
 	if err != nil {

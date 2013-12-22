@@ -15,33 +15,38 @@ angular.module('queue', [])
         };
     }])
     .controller('QueueNewCtrl', ['$scope', '$location', function($scope, $location) {
-        var userId = hostapp.getUserId();
-        $.post("/api/game/start", { UserId: userId }, function(data) {
-            data = $.parseJSON(data);
-            if (data.Success) {
-                $scope.GameId = data.Id;
-            }
-        });
-
-        $scope.startGame = function() {
-            $.post("/api/game/move",
+        window.finishedFriendPicker = function(friends) {
+            var userId = hostapp.getUserId();
+            $.post("/api/game/start",
                    { UserId: userId, 
-                     GameId: $scope.GameId,
-                     Type: 0,
-                     Data: $scope.story }, 
+                     Players: friends.join(",") },
                    function(data) {
                        data = $.parseJSON(data);
                        if (data.Success) {
-                           $scope.$apply(function() {
-                               $location.path("/queue");
-                               console.log($scope.GameId);
-                           });
+                           $scope.GameId = data.Id;
                        }
                    });
-        };
-
-        $scope.cancel = function() {
-            $location.path("/queue");
+            
+            $scope.startGame = function() {
+                $.post("/api/game/move",
+                       { UserId: userId, 
+                         GameId: $scope.GameId,
+                         Type: 0,
+                         Data: $scope.story }, 
+                       function(data) {
+                           data = $.parseJSON(data);
+                           if (data.Success) {
+                               $scope.$apply(function() {
+                                   $location.path("/queue");
+                                   console.log($scope.GameId);
+                               });
+                           }
+                       });
+            };
+            
+            $scope.cancel = function() {
+                $location.path("/queue");
+            };
         };
     }]);
 
