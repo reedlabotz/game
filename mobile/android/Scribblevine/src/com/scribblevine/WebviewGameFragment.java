@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class WebviewGameFragment extends Fragment {
 	private static final String TAG = "WebviewGameFragment";
@@ -27,6 +28,7 @@ public class WebviewGameFragment extends Fragment {
 			webview = new WebView(getActivity());
 	        WebSettings webSettings = webview.getSettings();
 	        webSettings.setJavaScriptEnabled(true);
+	        webview.setWebViewClient(new WebViewClient());
 	        webview.loadUrl(getResources().getString(R.string.app_url));
 		} else if (webview.getParent() instanceof ViewGroup){
 			((ViewGroup) webview.getParent()).removeView(webview);

@@ -1,15 +1,14 @@
 package com.scribblevine;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 
-import com.facebook.model.GraphUser;
-
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+
+import com.facebook.model.GraphUser;
 
 public class GameInterface {
 	private final static String TAG = "GameInterface";
