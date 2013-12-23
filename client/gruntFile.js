@@ -12,11 +12,16 @@ module.exports = function(grunt) {
     // Default task.
     grunt.registerTask('default', ['jshint','build']);
     grunt.registerTask('build', ['clean','html2js','concat','recess:build','copy:img','copy:vendor']);
-    grunt.registerTask('release', ['clean','html2js','uglify','jshint','concat:index', 'recess:min','copy:img','copy:vendor']);
+    grunt.registerTask('release', ['prodconfig','clean','html2js','uglify','jshint','concat:index', 'recess:min','copy:img','copy:vendor']);
 
     // Print a timestamp (useful for when watching)
     grunt.registerTask('timestamp', function() {
         grunt.log.subhead(Date());
+    });
+
+    // Set distdir for prod
+    grunt.registerTask('prodconfig', function() {
+        grunt.config('distdir','../server/public');
     });
 
     // Project configuration.

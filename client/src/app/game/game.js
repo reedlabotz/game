@@ -9,7 +9,7 @@ angular.module('game', [])
         var updateToolbox = function() {
             $scope.undoable = $scope.sketchpad.undoable();
             $scope.redoable = $scope.sketchpad.redoable();
-        }
+        };
 
         $.getJSON("/api/game/get", {Id: $routeParams.Id}, function(data) {
             console.log(data);
@@ -21,14 +21,14 @@ angular.module('game', [])
                 width: '100%',
                 height: '100%'
             };
-            if (data.Type == 0) {
+            if (data.Type === 0) {
                 options.editing = true;
             } else {
                 options.editing = false;
                 options.strokes = $.parseJSON(data.Data);
             }
             
-            var paper = Raphael("drawing");
+            var paper = new Raphael("drawing");
             paper.setViewBox(0,0,500,500,true);
             paper.setSize('100%', '100%');
             $scope.sketchpad = Raphael.sketchpad(paper, options);
@@ -62,7 +62,7 @@ angular.module('game', [])
                 UserId: userId
             };
 
-            if ($scope.Type == 0) {
+            if ($scope.Type === 0) {
                 payload.Type = 1;
                 payload.Data = $scope.sketchpad.json();
             } else {
