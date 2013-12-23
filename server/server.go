@@ -182,8 +182,20 @@ func queueGet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	gameKeys := make([]*datastore.Key, len(keys))
+	for i,k := range keys {
+		gameKeys[i] = k.Parent()
+	}
+
 	games := make([]Game, len(keys))
-	datastore.GetMulti(c, keys, &games)
+	c.Infof("%s", gameKeys)
+	err = datastore.GetMulti(c, gameKeys, games)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	for i,k := range keys {
 		games[i].Id = k.Parent().Encode()
 	}

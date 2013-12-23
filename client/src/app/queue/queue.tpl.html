@@ -7,7 +7,8 @@
      class="box button"
      ng-href="#/game/{{game.id}}">
   <img ng-repeat="player in game.players"
-       src="http://graph.facebook.com/{{player}}/picture?type=square">
-  A previous game
+       ng-src="http://graph.facebook.com/{{player}}/picture?type=square"
+       width="32" height="32"
+       class="profile-pic">
 </a>
 
