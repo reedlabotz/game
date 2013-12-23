@@ -189,7 +189,6 @@ func queueGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	games := make([]Game, len(keys))
-	c.Infof("%s", gameKeys)
 	err = datastore.GetMulti(c, gameKeys, games)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
