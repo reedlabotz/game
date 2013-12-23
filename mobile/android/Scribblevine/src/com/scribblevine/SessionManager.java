@@ -23,11 +23,13 @@ public class SessionManager {
 	UiLifecycleHelper uiHelper;
 	Session session;
 	GraphUser user;
+	boolean quiet;
 	
 	SessionManager(FragmentActivity context, SessionCallback callback) {
 		this.context = context;
 		uiHelper = new UiLifecycleHelper(context, fbcallback);
 		this.callback = callback;
+		quiet = false;
 	}
 	
 	public void init() {
@@ -41,10 +43,16 @@ public class SessionManager {
 	}
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+		if (quiet) {
+			return; //Don't send state changes after activity has died.
+		}
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
 	        processProfileInfo(session);
 	    } else if (state.isClosed()) {
+	        Log.i(TAG, "Logged out...");
+	        //callback.loggedOut(this);
+	    } else if (!state.isClosed() && state.isOpened()) {
 	        Log.i(TAG, "Logged out...");
 	        callback.loggedOut(this);
 	    }
@@ -108,6 +116,7 @@ public class SessionManager {
 		uiHelper.onCreate(savedInstanceState);
 	}
 	protected void onResume() {
+		quiet = false;
 	    // For scenarios where the main activity is launched and user
 	    // session is not null, the session state change notification
 	    // may not be triggered. Trigger it if it's open/closed.
@@ -119,6 +128,7 @@ public class SessionManager {
 		uiHelper.onResume();
 	}
 	protected void onPause() {
+		quiet = true;
 		uiHelper.onResume();
 	}
 	protected void onDestroy() {
@@ -128,8 +138,13 @@ public class SessionManager {
 		uiHelper.onActivityResult(arg0, arg1, arg2);
 	}
 	protected void onSaveInstanceState(Bundle outState) {
+		quiet = true;
 		uiHelper.onSaveInstanceState(outState);
 	}
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		quiet = false;
+	}
+
 	
 	private Session.StatusCallback fbcallback = new Session.StatusCallback() {
 	    @Override

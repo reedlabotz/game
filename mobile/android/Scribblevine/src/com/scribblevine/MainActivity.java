@@ -74,6 +74,11 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 	    sessionManager.onSaveInstanceState(outState);
 	}
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+	
 	
 	
 	public void loggedOut(final SessionManager manager) {

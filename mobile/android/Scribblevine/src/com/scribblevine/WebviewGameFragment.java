@@ -19,6 +19,7 @@ public class WebviewGameFragment extends Fragment {
 	
 	public void setGameInterface(GameInterface gameInterface) {
 		this.gameInterface = gameInterface;
+		startInterface();
 	}
 	
 	@Override
@@ -28,6 +29,7 @@ public class WebviewGameFragment extends Fragment {
 			webview = new WebView(getActivity());
 	        WebSettings webSettings = webview.getSettings();
 	        webSettings.setJavaScriptEnabled(true);
+	        startInterface();
 	        webview.setWebViewClient(new WebViewClient());
 	        webview.loadUrl(getResources().getString(R.string.app_url));
 		} else if (webview.getParent() instanceof ViewGroup){
@@ -38,12 +40,24 @@ public class WebviewGameFragment extends Fragment {
         return webview;
 	}
 	
+	private void startInterface() {
+		if (webview != null && gameInterface != null) {
+			gameInterface.setWebview(webview);
+		}
+	}
+	
+	private void stopInterface() {
+		if (gameInterface != null) {
+			gameInterface.unsetWebview();
+		}
+	}
+	
 	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	public void onStart() {
 		super.onStart();
 		Log.d(TAG, "Webview Start");
-        gameInterface.setWebview(webview);
+        startInterface();
 	}	
 	
 	@Override
@@ -57,7 +71,7 @@ public class WebviewGameFragment extends Fragment {
 	public void onStop() {
 		super.onStop();
 		Log.d(TAG, "Webview Stop");
-		gameInterface.unsetWebview();
+		stopInterface();
 	}
 	
 	@Override
