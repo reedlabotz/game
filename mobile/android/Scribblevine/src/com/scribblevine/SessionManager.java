@@ -1,6 +1,7 @@
 package com.scribblevine;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,7 +13,8 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 
-public class SessionManager {
+public class SessionManager extends Fragment {
+	public static final String FRAGMENT_TAG = "SessionManager";
 	private static final String TAG = "SessionManager";
 	public static interface SessionCallback {
 		public void loggedIn(SessionManager manager);
@@ -30,6 +32,12 @@ public class SessionManager {
 		uiHelper = new UiLifecycleHelper(context, fbcallback);
 		this.callback = callback;
 		quiet = false;
+	}
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
 	}
 	
 	public void init() {
@@ -51,9 +59,9 @@ public class SessionManager {
 	        processProfileInfo(session);
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
-	        //callback.loggedOut(this);
+	        callback.loggedOut(this);
 	    } else if (!state.isClosed() && state.isOpened()) {
-	        Log.i(TAG, "Logged out...");
+	        Log.i(TAG, "No state at all...");
 	        callback.loggedOut(this);
 	    }
 	}
@@ -93,6 +101,10 @@ public class SessionManager {
     }
 	
 	private void processProfileInfo(Session session) {
+		if (user != null) {
+			return; //our work is done.
+		}
+		Log.d(TAG, this+" Requesting user info: "+user);
 		Request.newMeRequest(session, 
 			new Request.GraphUserCallback() {
 				@Override 
@@ -112,10 +124,10 @@ public class SessionManager {
 	
 	
 	/** Pass-through functions that the parent Activity must call **/
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreateActivity(Bundle savedInstanceState) {
 		uiHelper.onCreate(savedInstanceState);
 	}
-	protected void onResume() {
+	protected void onResumeActivity() {
 		quiet = false;
 	    // For scenarios where the main activity is launched and user
 	    // session is not null, the session state change notification
@@ -127,21 +139,21 @@ public class SessionManager {
 	    }
 		uiHelper.onResume();
 	}
-	protected void onPause() {
+	protected void onPauseActivity() {
 		quiet = true;
 		uiHelper.onResume();
 	}
-	protected void onDestroy() {
+	protected void onDestroyActivity() {
 		uiHelper.onDestroy();
 	}
-	protected void onActivityResult(int arg0, int arg1, android.content.Intent arg2) {
+	protected void onActivityResultActivity(int arg0, int arg1, android.content.Intent arg2) {
 		uiHelper.onActivityResult(arg0, arg1, arg2);
 	}
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceStateActivity(Bundle outState) {
 		quiet = true;
 		uiHelper.onSaveInstanceState(outState);
 	}
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	protected void onRestoreInstanceStateActivity(Bundle savedInstanceState) {
 		quiet = false;
 	}
 

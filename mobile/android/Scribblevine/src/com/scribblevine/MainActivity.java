@@ -30,10 +30,22 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 	}
 	
 	private void initManagers(Bundle savedInstanceState) {
-		sessionManager = new SessionManager(this, this);
-		sessionManager.onCreate(savedInstanceState);
-		sessionManager.init();
-		gameInterface = new GameInterface(sessionManager, this);
+		FragmentManager fm = getSupportFragmentManager();
+		sessionManager = (SessionManager) fm.findFragmentByTag(SessionManager.FRAGMENT_TAG);
+		if (sessionManager == null) {
+			Log.d(TAG, "Making a new sessionManager");
+			sessionManager = new SessionManager(this, this);
+			sessionManager.onCreateActivity(savedInstanceState);
+			fm.beginTransaction().add(sessionManager, SessionManager.FRAGMENT_TAG).commit();
+			sessionManager.init();
+		}
+		
+		gameInterface = (GameInterface) fm.findFragmentByTag(GameInterface.FRAGMENT_TAG);
+		if (gameInterface == null) {
+			Log.d(TAG, "Making a new gameInterface");
+			gameInterface = new GameInterface(sessionManager, this);
+			fm.beginTransaction().add(gameInterface, GameInterface.FRAGMENT_TAG).commit();
+		}
 	}
 
 	@Override
@@ -47,36 +59,37 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 	@Override
 	public void onResume() {
 	    super.onResume();
-	    sessionManager.onResume();
+	    sessionManager.onResumeActivity();
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
-	    sessionManager.onActivityResult(requestCode, resultCode, data);
+	    sessionManager.onActivityResultActivity(requestCode, resultCode, data);
 	}
 
 	@Override
 	public void onPause() {
 	    super.onPause();
-	    sessionManager.onPause();
+	    sessionManager.onPauseActivity();
 	}
 
 	@Override
 	public void onDestroy() {
 	    super.onDestroy();
-	    sessionManager.onDestroy();
+	    sessionManager.onDestroyActivity();
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
-	    sessionManager.onSaveInstanceState(outState);
+	    sessionManager.onSaveInstanceStateActivity(outState);
 	}
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
+		sessionManager.onRestoreInstanceStateActivity(savedInstanceState);
 	}
 	
 	

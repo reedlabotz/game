@@ -22,10 +22,21 @@ public class WebviewGameFragment extends Fragment {
 		startInterface();
 	}
 	
+	private void setupGameInterface() {
+		gameInterface = (GameInterface) getFragmentManager().findFragmentByTag(GameInterface.FRAGMENT_TAG);
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		Log.d(TAG, "Webview Create: parent:"+container);
+		Log.d(TAG, "Webview Create: parent:"+container+ " and gameInterface:"+gameInterface);
+		setupGameInterface();
+		if (webview == null && gameInterface != null) {
+			webview = gameInterface.getRetainedWebview();
+			Log.d(TAG, "Loaded a webview from the interface: "+webview);
+		}
+		
 		if (webview == null) {
+			Log.d(TAG, "Making a new webview");
 			webview = new WebView(getActivity());
 	        WebSettings webSettings = webview.getSettings();
 	        webSettings.setJavaScriptEnabled(true);
@@ -43,12 +54,6 @@ public class WebviewGameFragment extends Fragment {
 	private void startInterface() {
 		if (webview != null && gameInterface != null) {
 			gameInterface.setWebview(webview);
-		}
-	}
-	
-	private void stopInterface() {
-		if (gameInterface != null) {
-			gameInterface.unsetWebview();
 		}
 	}
 	
@@ -71,7 +76,6 @@ public class WebviewGameFragment extends Fragment {
 	public void onStop() {
 		super.onStop();
 		Log.d(TAG, "Webview Stop");
-		stopInterface();
 	}
 	
 	@Override

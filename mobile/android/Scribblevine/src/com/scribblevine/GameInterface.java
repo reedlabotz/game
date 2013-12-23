@@ -4,13 +4,16 @@ import java.util.List;
 
 import org.json.JSONArray;
 
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import com.facebook.model.GraphUser;
 
-public class GameInterface {
+public class GameInterface extends Fragment {
+	public static final String FRAGMENT_TAG = "GameInterface";
 	private final static String TAG = "GameInterface";
 	public static interface GameCallback {
 		public void requestedFriendPicker();
@@ -24,9 +27,19 @@ public class GameInterface {
 		this.callback = callback;
 	}
 	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setRetainInstance(true);
+	}
+	
 	public void setWebview(WebView webview) {
 		this.webview = webview;
         webview.addJavascriptInterface(this, "hostapp");
+	}
+	
+	public WebView getRetainedWebview() {
+		return webview;
 	}
 	
 	public void unsetWebview() {
