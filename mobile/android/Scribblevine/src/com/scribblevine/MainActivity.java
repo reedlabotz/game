@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 		if (sessionManager == null) {
 			Log.d(TAG, "Making a new sessionManager");
 			sessionManager = new SessionManager(this, this);
-			sessionManager.onCreateActivity(savedInstanceState);
+//			sessionManager.onCreateActivity(savedInstanceState);
 			fm.beginTransaction().add(sessionManager, SessionManager.FRAGMENT_TAG).commit();
 			sessionManager.init();
 		}
@@ -56,36 +56,36 @@ public class MainActivity extends FragmentActivity implements SessionCallback, G
 	}
 
 	
-	@Override
-	public void onResume() {
-	    super.onResume();
-	    sessionManager.onResumeActivity();
-	}
-
+//	@Override
+//	public void onResume() {
+//	    super.onResume();
+//	    sessionManager.onResumeActivity();
+//	}
+//
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 	    sessionManager.onActivityResultActivity(requestCode, resultCode, data);
 	}
-
-	@Override
-	public void onPause() {
-	    super.onPause();
-	    sessionManager.onPauseActivity();
-	}
-
-	@Override
-	public void onDestroy() {
-	    super.onDestroy();
-	    sessionManager.onDestroyActivity();
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-	    super.onSaveInstanceState(outState);
-	    sessionManager.onSaveInstanceStateActivity(outState);
-	}
-	
+//
+//	@Override
+//	public void onPause() {
+//	    super.onPause();
+//	    sessionManager.onPauseActivity();
+//	}
+//
+//	@Override
+//	public void onDestroy() {
+//	    super.onDestroy();
+//	    sessionManager.onDestroyActivity();
+//	}
+//
+//	@Override
+//	public void onSaveInstanceState(Bundle outState) {
+//	    super.onSaveInstanceState(outState);
+//	    sessionManager.onSaveInstanceStateActivity(outState);
+//	}
+//	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);

@@ -1,5 +1,6 @@
 package com.scribblevine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,6 +39,7 @@ public class SessionManager extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
+	    uiHelper.onCreate(savedInstanceState);
 	}
 	
 	public void init() {
@@ -123,40 +125,78 @@ public class SessionManager extends Fragment {
 	
 	
 	
-	/** Pass-through functions that the parent Activity must call **/
-	protected void onCreateActivity(Bundle savedInstanceState) {
-		uiHelper.onCreate(savedInstanceState);
-	}
-	protected void onResumeActivity() {
-		quiet = false;
-	    // For scenarios where the main activity is launched and user
-	    // session is not null, the session state change notification
-	    // may not be triggered. Trigger it if it's open/closed.
-	    Session session = Session.getActiveSession();
-	    if (session != null &&
-	           (session.isOpened() || session.isClosed()) ) {
-	        onSessionStateChange(session, session.getState(), null);
-	    }
-		uiHelper.onResume();
-	}
-	protected void onPauseActivity() {
-		quiet = true;
-		uiHelper.onResume();
-	}
-	protected void onDestroyActivity() {
-		uiHelper.onDestroy();
-	}
+//	/** Pass-through functions that the parent Activity must call **/
+//	protected void onCreateActivity(Bundle savedInstanceState) {
+//		uiHelper.onCreate(savedInstanceState);
+//	}
+//	protected void onResumeActivity() {
+//		quiet = false;
+//	    // For scenarios where the main activity is launched and user
+//	    // session is not null, the session state change notification
+//	    // may not be triggered. Trigger it if it's open/closed.
+//	    Session session = Session.getActiveSession();
+//	    if (session != null &&
+//	           (session.isOpened() || session.isClosed()) ) {
+//	        onSessionStateChange(session, session.getState(), null);
+//	    }
+//		uiHelper.onResume();
+//	}
+//	protected void onPauseActivity() {
+//		quiet = true;
+//		uiHelper.onResume();
+//	}
+//	protected void onDestroyActivity() {
+//		uiHelper.onDestroy();
+//	}
 	protected void onActivityResultActivity(int arg0, int arg1, android.content.Intent arg2) {
 		uiHelper.onActivityResult(arg0, arg1, arg2);
 	}
-	protected void onSaveInstanceStateActivity(Bundle outState) {
-		quiet = true;
-		uiHelper.onSaveInstanceState(outState);
-	}
+//	protected void onSaveInstanceStateActivity(Bundle outState) {
+//		quiet = true;
+//		uiHelper.onSaveInstanceState(outState);
+//	}
 	protected void onRestoreInstanceStateActivity(Bundle savedInstanceState) {
 		quiet = false;
 	}
 
+	
+	
+	
+	@Override
+	public void onResume() {
+	    super.onResume();
+	    quiet = false;
+	    uiHelper.onResume();
+	}
+
+	@Override
+	public void onPause() {
+	    super.onPause();
+	    quiet = true;
+	    uiHelper.onPause();
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
+	    uiHelper.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void onDestroy() {
+	    super.onDestroy();
+	    uiHelper.onDestroy();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+	    super.onSaveInstanceState(outState);
+		quiet = true;
+	    uiHelper.onSaveInstanceState(outState);
+	}
+	
+	
+	
 	
 	private Session.StatusCallback fbcallback = new Session.StatusCallback() {
 	    @Override
